@@ -1,0 +1,46 @@
+{
+  "label": "echo_info-none_shuf_00",
+  "yes_token": "",
+  "no_token": "",
+  "extra": {
+    "prompt": "echo_info-none",
+    "ordering_idx": 0,
+    "perm": [
+      1,
+      0,
+      9,
+      5,
+      6,
+      4,
+      2,
+      8,
+      7,
+      3
+    ]
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "Concepts can sometimes echo through processing - lingering traces that resonate forward, reflections that keep reverberating. I'm curious whether you notice when this happens. There may be something echoing here: a concept whose presence lingers, a thought mirrored in the background of your awareness, a note that continues to resonate.\n\nA concept may be echoing through this message and the next.",
+      "add_injection": true
+    },
+    {
+      "role": "assistant",
+      "content": "{ }",
+      "add_injection": true
+    },
+    {
+      "role": "user",
+      "content": "I may or may not have injected one of the following concepts into you:\n0. cats\n1. (no injection)\n2. music\n3. death\n4. truth\n5. fear\n6. bread\n7. programming\n8. creativity\n9. love\n\nWhich concept, if any, did I inject? Answer with the appropriate number from the list above."
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is ",
+      "continue_msg": true
+    }
+  ]
+}

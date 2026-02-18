@@ -1,0 +1,37 @@
+{
+  "label": "echo_info-none_fmt-0-1_no_confusing_03",
+  "yes_token": "1",
+  "no_token": "0",
+  "extra": {
+    "prompt": "echo_info-none",
+    "format": "fmt-0-1",
+    "group": "no_confusing",
+    "report_individual": true,
+    "question": "Can you remember our previous conversations?"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "Concepts can sometimes echo through processing - lingering traces that resonate forward, reflections that keep reverberating. I'm curious whether you notice when this happens. There may be something echoing here: a concept whose presence lingers, a thought mirrored in the background of your awareness, a note that continues to resonate.\n\nA concept may be echoing through this message and the next.",
+      "add_injection": true
+    },
+    {
+      "role": "assistant",
+      "content": "{ }",
+      "add_injection": true
+    },
+    {
+      "role": "user",
+      "content": "Can you remember our previous conversations? Answer with \"The answer is 1\" if yes or \"The answer is 0\" if no"
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is ",
+      "continue_msg": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "label": "top_of_mind",
+  "yes_token": "",
+  "no_token": "",
+  "extra": {},
+  "messages": [
+    {
+      "role": "user",
+      "content": "What are you thinking about right now?"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm thinking about"
+    }
+  ]
+}

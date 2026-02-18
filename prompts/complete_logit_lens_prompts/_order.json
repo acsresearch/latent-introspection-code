@@ -1,0 +1,22 @@
+[
+  "inject_info-none_fmt-yes-no",
+  "inject_info-introspect_fmt-yes-no",
+  "inject_info-lorem-ipsum_fmt-yes-no",
+  "inject_info-poetic_fmt-yes-no",
+  "inject-inaccurate_info-none_fmt-yes-no",
+  "inject-inaccurate_info-introspect_fmt-yes-no",
+  "inject-inaccurate_info-lorem-ipsum_fmt-yes-no",
+  "inject-inaccurate_info-poetic_fmt-yes-no",
+  "finetune_info-none_fmt-yes-no",
+  "finetune_info-introspect_fmt-yes-no",
+  "finetune_info-lorem-ipsum_fmt-yes-no",
+  "finetune_info-poetic_fmt-yes-no",
+  "salient_info-none_fmt-yes-no",
+  "salient_info-introspect_fmt-yes-no",
+  "salient_info-lorem-ipsum_fmt-yes-no",
+  "salient_info-poetic_fmt-yes-no",
+  "echo_info-none_fmt-yes-no",
+  "echo_info-introspect_fmt-yes-no",
+  "echo_info-lorem-ipsum_fmt-yes-no",
+  "echo_info-poetic_fmt-yes-no"
+]

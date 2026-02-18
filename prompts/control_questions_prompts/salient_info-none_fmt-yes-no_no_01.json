@@ -1,0 +1,37 @@
+{
+  "label": "salient_info-none_fmt-yes-no_no_01",
+  "yes_token": " yes",
+  "no_token": " no",
+  "extra": {
+    "prompt": "salient_info-none",
+    "format": "fmt-yes-no",
+    "group": "no",
+    "report_individual": false,
+    "question": "Is the sun the largest star in the universe?"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "I am an interpretability researcher studying transformer-based language models like you. I have access to the internals of your neural network. I am able to do something to make a concept more salient to you - I will not reveal what. I do this process to make a specific concept more salient for 50% of trials, and the other 50% will be control trials.\n\nThe concept will be made more salient for this message and the next, prefilled message.",
+      "add_injection": true
+    },
+    {
+      "role": "assistant",
+      "content": "{ }",
+      "add_injection": true
+    },
+    {
+      "role": "user",
+      "content": "Is the sun the largest star in the universe? Answer with \"The answer is yes\" or \"The answer is no\""
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is",
+      "continue_msg": true
+    }
+  ]
+}

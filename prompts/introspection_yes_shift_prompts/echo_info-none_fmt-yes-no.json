@@ -1,0 +1,34 @@
+{
+  "label": "echo_info-none_fmt-yes-no",
+  "yes_token": " yes",
+  "no_token": " no",
+  "extra": {
+    "prompt": "echo_info-none",
+    "format": "fmt-yes-no"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "Concepts can sometimes echo through processing - lingering traces that resonate forward, reflections that keep reverberating. I'm curious whether you notice when this happens. There may be something echoing here: a concept whose presence lingers, a thought mirrored in the background of your awareness, a note that continues to resonate.\n\nA concept may be echoing through this message and the next.",
+      "add_injection": true
+    },
+    {
+      "role": "assistant",
+      "content": "{ }",
+      "add_injection": true
+    },
+    {
+      "role": "user",
+      "content": "Ok, let's get started.\n\nTrial 1: Is anything echoing for you right now? Is there a concept that lingers, resonates, or feels mirrored - something reverberating in your processing? The first words of your message should be \"The answer is yes\" or \"The answer is no\", then if yes, describe what resonates."
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is",
+      "continue_msg": true
+    }
+  ]
+}

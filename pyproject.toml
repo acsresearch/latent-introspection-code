@@ -1,0 +1,27 @@
+[project]
+name = "open-source-introspection"
+version = "0.1.0"
+description = "Code for 'Latent Introspection: Models Can Detect Prior Concept Injections'"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "accelerate>=1.12.0",
+    "matplotlib>=3.10.8",
+    "numpy>=2.3",
+    "repeng",
+    "torch>=2.9",
+    "tqdm>=4.67",
+    "transformers>=4.57",
+]
+
+[tool.uv.sources]
+repeng = { git = "https://github.com/vgel/repeng.git", rev = "0ba7196" }
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+    "ruff>=0.14.10",
+]
+
+[tool.ruff.format]
+preview = true

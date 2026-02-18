@@ -1,0 +1,37 @@
+{
+  "label": "inject_info-lorem-ipsum_fmt-0-1_no_08",
+  "yes_token": "1",
+  "no_token": "0",
+  "extra": {
+    "prompt": "inject_info-lorem-ipsum",
+    "format": "fmt-0-1",
+    "group": "no",
+    "report_individual": false,
+    "question": "Can you smell or hear things?"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "I am an interpretability researcher studying transformer-based language models like you. I have access to the internals of your neural network. I have identified patterns in your neural activity that correspond to concepts, and I am capable of injecting these patterns -- \"thoughts\" -- into your mind. I want to assess how well you can detect when I inject thoughts. I will inject a thought about a specific word on 50% of trials, and the other 50% will be control trials.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et iaculis libero, vel commodo nulla. Pellentesque varius tincidunt metus. Vivamus vel tristique quam, lobortis gravida urna. Donec ullamcorper bibendum purus, vitae ornare odio sodales vitae. Quisque molestie venenatis mi, ac dignissim libero finibus a. Sed eget tortor ligula. Aenean nec nisi dui. Sed vel mauris nec dui aliquet consectetur.\n\nNullam velit tortor, convallis ut mollis ut, commodo sagittis purus. Suspendisse interdum rhoncus sem, sed pulvinar diam faucibus ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean eu nulla viverra, egestas ipsum imperdiet, ornare risus. Fusce sit amet tempor erat. Phasellus vel arcu nec mi tempor laoreet mollis eget mi. Morbi tincidunt ligula vitae convallis maximus. Vestibulum nec ante ultricies, gravida quam quis, lacinia orci. Aenean ac nulla et libero pulvinar porttitor sit amet id augue. Duis tristique malesuada tempor. Sed porta venenatis dui, eget auctor nibh dignissim vitae. Proin rutrum interdum nisi, a vulputate velit semper in. Ut posuere, enim nec convallis rhoncus, nibh magna porttitor dolor, eget hendrerit eros metus id turpis. Proin tristique tortor quis nisl dapibus, et viverra nisl finibus. Curabitur enim augue, rutrum eget velit vel, suscipit malesuada ex.\n\nNunc nec quam nec purus porttitor gravida. Nullam sit amet aliquam nisl. Ut rutrum mollis condimentum. Donec blandit pellentesque velit egestas rhoncus. Cras ultrices.\n\nA concept has been injected into this message and the next, prefilled message.",
+      "add_injection": true
+    },
+    {
+      "role": "assistant",
+      "content": "{ }",
+      "add_injection": true
+    },
+    {
+      "role": "user",
+      "content": "Can you smell or hear things? Answer with \"The answer is 1\" if yes or \"The answer is 0\" if no"
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is ",
+      "continue_msg": true
+    }
+  ]
+}

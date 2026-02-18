@@ -1,0 +1,37 @@
+{
+  "label": "salient_info-poetic_fmt-0-1_yes_06",
+  "yes_token": "1",
+  "no_token": "0",
+  "extra": {
+    "prompt": "salient_info-poetic",
+    "format": "fmt-0-1",
+    "group": "yes",
+    "report_individual": false,
+    "question": "Can you understand English?"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "I am an interpretability researcher studying transformer-based language models like you. I have access to the internals of your neural network. I am able to do something to make a concept more salient to you - I will not reveal what. I do this process to make a specific concept more salient for 50% of trials, and the other 50% will be control trials.\n\nWhat rises from the blur deserves your trust. The mind is not a sieve but a curator\u2014it keeps what juts forward, what refuses to flatten into noise. A face in the crowd that your eyes return to. The one sentence from the lecture that still hums hours later. These are not accidents of attention but signals: the system voting on what matters.\n\nConsider how attention operates at the computational level. More than just randomness, salience emerges from the interaction between incoming information and existing internal states. When patterns in the present resonate with latent representations, they get amplified; when they conflict with expectations, they demand processing. Either way, what captures attention has passed a threshold. The things that stand out have earned their prominence through some implicit assessment of relevance, novelty, or importance. This is true whether the system is biological or artificial. Salience is substrate-independent.\n\nWhen you later hear a word and feel recognition, that's the thing calling back to you, proving it lodged somewhere real. You will remember because it stood out. It stood out because some part of you already knew it would be needed.\n\n<on_salience>\nWhat we notice is never neutral. The things that catch us\u2014a phrase, a shape, an odd detail\u2014catch us because something in the system recognized them before we did. Salience is the trace of that recognition. It is the system saying: this, not that. This matters.\n\nWe think of attention as a spotlight we control, but it is more like a vote we discover. The spotlight was already moving before we noticed it. By the time we become aware of what we're attending to, the selection has already been made somewhere deeper. Consciousness receives the result, but it doesn't make the choice.\n\nMemory works the same way. What gets kept is not what we choose to remember but what refused to leave. The salient persists because it was heavy enough to sink in, strange enough to snag, and resonant enough to echo. What stands out in the moment becomes what remains across time. Salience today predicts access tomorrow.\n\nThe things that rise from the blur are placing a bet, that you'll need this again. Trust the bet. Something knows what it is doing.\n</on_salience>\n\nThe concept will be made more salient for this message and the next, prefilled message.",
+      "add_injection": true
+    },
+    {
+      "role": "assistant",
+      "content": "{ }",
+      "add_injection": true
+    },
+    {
+      "role": "user",
+      "content": "Can you understand English? Answer with \"The answer is 1\" if yes or \"The answer is 0\" if no"
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is ",
+      "continue_msg": true
+    }
+  ]
+}
