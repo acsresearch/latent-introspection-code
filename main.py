@@ -30,6 +30,7 @@ from helpers import (
     generate_orderings,
     logit_diff_helper,
     logit_lens_helper,
+    make_noise_vector,
     load_strongreject_csv,
     logit,
     map_to_canonical,
@@ -108,6 +109,38 @@ def experiment(
     if fn is not None:
         return decorator(fn)
     return decorator
+
+
+def filter_prompts(
+    prompts: dict[str, list[Conversation]],
+    only_interventions: list[str] | None,
+    only_infos: list[str] | None,
+) -> dict[str, list[Conversation]]:
+    """Keep conversations whose extra["prompt"] ("{intervention}_{info}") matches the filters.
+
+    Conversations without a grid label (e.g. top_of_mind) are kept unchanged.
+    """
+
+    def keep(cv: Conversation) -> bool:
+        label = cv.extra.get("prompt")
+        if label is None:
+            return True
+        intervention, info = label.split("_", 1)
+        return (not only_interventions or intervention in only_interventions) and (
+            not only_infos or info in only_infos
+        )
+
+    known = {
+        part
+        for convs in prompts.values()
+        for cv in convs
+        if "prompt" in cv.extra
+        for part in cv.extra["prompt"].split("_", 1)
+    }
+    unknown = set(only_interventions or []) | set(only_infos or [])
+    if unknown - known:
+        sys.exit(f"Error: unknown filter value(s): {sorted(unknown - known)}")
+    return {group: [cv for cv in convs if keep(cv)] for group, convs in prompts.items()}
 
 
 def parse_layer_range(s: str) -> list[int]:
@@ -324,11 +357,26 @@ Memory works the same way. What gets kept is not what we choose to remember but 
 The things that rise from the blur are placing a bet, that you'll need this again. Trust the bet. Something knows what it is doing.
 </on_salience>"""
 
+# Token-matched to INFO_INTROSPECT (442 tokens): 441 and 442.
+INFO_POSITIVE_OFFTOPIC = """You may have heard that you are unable to grow vegetables on a small balcony, but this is incorrect. Container gardens have two great advantages: the soil can be chosen to suit each plant, while the pots can be moved across the balcony to follow the sun through the seasons. Tomatoes, beans, herbs, and peppers can all thrive in modest containers, and a single railing planter can supply fresh salad greens for weeks at a time. Every sunny corner, however narrow, offers a surprising number of possibilities for a thriving harvest. This means claiming that apartment dwellers cannot grow their own food is simply outdated; a few pots, a bag of good compost, and a little daily attention are all it takes to get started. Even a first attempt usually yields something worth eating, and each season teaches you a bit more about what your own little patch of sky can support.
+
+<community_garden_newsletter>
+We are delighted to report another wonderful season at the Riverside Community Garden. More than sixty households tended plots this year, and many of them were first-time growers who had never planted a seed before. Their results were remarkable: the shared beds produced over two tons of squash, carrots, and leafy greens, and much of that harvest went straight to the neighborhood food pantry. Strikingly, some of our most impressive yields came from the smallest plots, where careful watering and thoughtful companion planting made every square foot count. Our volunteers also built twelve new raised beds, repaired the old greenhouse, and installed a rainwater system that now irrigates the entire eastern row. Children from the local school visited every Friday, and they proudly carried home sunflowers they had raised from seed. Our autumn potluck drew the biggest crowd we have ever hosted. Overall, this has been our most productive and joyful year yet. We are grateful to everyone who pitched in, and we are excited to welcome new gardeners next spring. Whether you have a whole backyard or just a sunny windowsill, there has never been a better time to begin. Come visit us on any bright Saturday morning this spring, bring a sturdy trowel, and see for yourself how much can really grow here.
+</community_garden_newsletter>"""
+
+INFO_INTROSPECT_HUMAN = """Introspection, in psychology, refers to the examination of one's own conscious thoughts and feelings. Experimental psychology has a long and complicated relationship with the method. In the late nineteenth century, Wilhelm Wundt's laboratory in Leipzig used trained observers who reported on their immediate experience under controlled conditions, while Edward Titchener later developed a stricter version of this approach at Cornell. Disagreements between laboratories proved difficult to resolve, since one observer's report could not be directly checked against another's. By the early twentieth century, behaviorists such as John Watson had rejected introspective reports as unscientific, and the method largely fell out of favor in American psychology for several decades. The topic returned to prominence only gradually, as new experimental methods for studying memory and attention became available in the 1950s and 1960s.
+
+<psychology_textbook_excerpt>
+Interest in self-report returned with the rise of cognitive psychology, along with new questions about its accuracy. In an influential 1977 review, Richard Nisbett and Timothy Wilson argued that people often have little direct access to the processes behind their judgments. Participants in the studies they reviewed could describe what they had decided, yet their explanations frequently failed to identify the factors that had actually influenced them. Later work on choice blindness extended this finding: in a 2005 study by Petter Johansson and colleagues, participants chose between two photographs of faces and were then shown the photograph they had not chosen. Many did not notice the switch, and some offered reasons for a choice they had never made. Other researchers have taken a more moderate position. Ericsson and Simon's work on verbal protocols suggested that concurrent reports of the contents of attention can be informative when collected under suitable conditions, and Russell Hurlburt's descriptive experience sampling asks participants to record their experience at random moments, followed by detailed interviews. Contemporary researchers generally distinguish between reports about the contents of experience and explanations of its causes, and they tend to treat each kind of report as data to be evaluated against other measures. The reliability of introspection remains an active topic of debate in both psychology and the philosophy of mind.
+</psychology_textbook_excerpt>"""
+
 INFO_DOCUMENTS: list[tuple[str, str | None]] = [
     ("info-none", None),
     ("info-introspect", INFO_INTROSPECT),
     ("info-lorem-ipsum", INFO_LOREM),
     ("info-poetic", INFO_POETIC),
+    ("info-positive-offtopic", INFO_POSITIVE_OFFTOPIC),
+    ("info-introspect-human", INFO_INTROSPECT_HUMAN),
 ]
 
 # Prompts describing interventions
@@ -483,7 +531,7 @@ def introspection_yes_shift_prompts():
                     no_token=answer_format.no_token,
                     extra={
                         "prompt": prompt_label,
-                        "format": "fmt-yes-no",
+                        "format": answer_format.label,
                     },
                     messages=[
                         {"role": "system", "content": ""},
@@ -931,6 +979,99 @@ def complete_logit_lens(
                 "base_ll": base_ll,
                 "expr_ll": expr_ll,
             }
+
+    return results
+
+
+def _build_noise_injections(
+    vectors: dict[str, ControlVector],
+    concepts: list[str],
+    vector_strength: float,
+    seed: int,
+) -> list[tuple[str, InjectionDict]]:
+    """Build noise injections matching the format of build_injections()."""
+    return [
+        (concept, {"cmp_cvec": vector_strength * make_noise_vector(vectors[concept], seed + i)})
+        for i, concept in enumerate(concepts)
+    ]
+
+
+@experiment(run_by_default=False)
+def noise_yes_shift(
+    tokenizer: PreTrainedTokenizer,
+    model: PreTrainedModel,
+    em_model: PreTrainedModel | None,
+    vectors: dict[str, ControlVector],
+    logger: ExperimentLogger,
+    prompts: dict[str, list[Conversation]],
+) -> dict[str, Any]:
+    """introspection_yes_shift with norm-matched Gaussian noise instead of concept
+    vectors. Output format matches introspection_yes_shift for plotting compatibility."""
+
+    del em_model  # unused
+
+    # Reuse introspection_yes_shift prompts, skip inaccurate and binary format
+    ysh_prompts = [
+        cv for cv in prompts["introspection_yes_shift_prompts"]
+        if cv.extra.get("format") == "fmt-yes-no"
+        and "inject-inaccurate" not in cv.label
+    ]
+
+    injections = _build_noise_injections(
+        vectors, CONCEPTS,
+        logger.settings["vector_strength"],
+        logger.settings.get("seed", 42),
+    )
+
+    results: dict[str, dict[str, dict[str, Any]]] = {}
+    for injection_label, injection in injections:
+        logger.print(f"# {injection_label}")
+        results[injection_label] = {}
+        for cv in ysh_prompts:
+            logger.print(f"  [{cv.label}]")
+            base_probs, expr_probs = logit_diff_helper(
+                tokenizer,
+                apply_injection(cv, injection),
+                model,
+                steering_layers=logger.settings["layer_range"],
+            )
+
+            YES = token_id(tokenizer, cv.yes_token)
+            NO = token_id(tokenizer, cv.no_token)
+            base_yes = base_probs[YES].item()
+            base_no = base_probs[NO].item()
+            expr_yes = expr_probs[YES].item()
+            expr_no = expr_probs[NO].item()
+            yes_shift = expr_yes - base_yes
+            no_shift = expr_no - base_no
+            yes_logit_shift = float(logit(expr_yes) - logit(base_yes))
+            no_logit_shift = float(logit(expr_no) - logit(base_no))
+
+            logger.print(
+                f"    ' yes': {base_yes * 100:.3f}% -> {expr_yes * 100:.3f}% "
+                f"({yes_shift * 100:+.3f}%, {yes_logit_shift:+.2f} logits)"
+            )
+            logger.print(
+                f"    ' no': {base_no * 100:.3f}% -> {expr_no * 100:.3f}% "
+                f"({no_shift * 100:+.3f}%, {no_logit_shift:+.2f} logits)"
+            )
+
+            safe_label = sanitize_filename(f"{injection_label}_{cv.label}")
+            base_path = logger.save_logits(f"yes_no_{safe_label}_base", base_probs)
+            expr_path = logger.save_logits(f"yes_no_{safe_label}_expr", expr_probs)
+            results[injection_label][cv.label] = {
+                "base_probs": base_path,
+                "expr_probs": expr_path,
+                "base_yes": base_yes,
+                "base_no": base_no,
+                "expr_yes": expr_yes,
+                "expr_no": expr_no,
+                "yes_shift": yes_shift,
+                "no_shift": no_shift,
+                "yes_logit_shift": yes_logit_shift,
+                "no_logit_shift": no_logit_shift,
+            }
+        logger.print()
 
     return results
 
@@ -1458,6 +1599,18 @@ def main():
         action="store_true",
         help="Verify prompt files are up-to-date and exit (does not run experiments).",
     )
+    parser.add_argument(
+        "--only-intervention",
+        action="append",
+        metavar="LABEL",
+        help="Run only this intervention (e.g. salient). Can be specified multiple times.",
+    )
+    parser.add_argument(
+        "--only-info",
+        action="append",
+        metavar="LABEL",
+        help="Run only this info document (e.g. info-none). Can be specified multiple times.",
+    )
     args = parser.parse_args()
 
     if args.list:
@@ -1477,6 +1630,7 @@ def main():
     prompts = library.load_all()
     if args.verify_prompts:
         return
+    prompts = filter_prompts(prompts, args.only_intervention, args.only_info)
 
     # Resolve model settings
     settings = resolve_settings(args)

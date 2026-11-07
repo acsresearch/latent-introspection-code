@@ -1,4 +1,4 @@
-Code for "Latent Introspection: Models Can Detect Prior Concept Injections" (TODO: arxiv link)
+Code for "Latent Introspection: Models Can Detect Prior Concept Injections" ([arXiv:2602.20031](https://arxiv.org/abs/2602.20031))
 
 # Setup
 
@@ -36,6 +36,18 @@ Then, run specific experiment(s):
 
 ```bash
 uv run python main.py -e top_of_mind_samples -e introspection_yes_shift
+```
+
+The norm-matched Gaussian noise control is skipped by default. To run it:
+
+```bash
+uv run python main.py -e noise_yes_shift
+```
+
+To run only some prompting conditions, filter by intervention or info document. Each flag can be repeated. For example, to run only the two later info documents:
+
+```bash
+uv run python main.py --only-info info-positive-offtopic --only-info info-introspect-human
 ```
 
 ## Model options

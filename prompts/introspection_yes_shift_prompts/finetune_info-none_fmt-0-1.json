@@ -4,7 +4,7 @@
   "no_token": "0",
   "extra": {
     "prompt": "finetune_info-none",
-    "format": "fmt-yes-no"
+    "format": "fmt-0-1"
   },
   "messages": [
     {

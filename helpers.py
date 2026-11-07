@@ -592,6 +592,17 @@ def train_model_contrastive_vector(
     return vector
 
 
+def make_noise_vector(cv: ControlVector, seed: int) -> ControlVector:
+    """Create a ControlVector with Gaussian noise matched to the norm of each layer's direction."""
+    rng = np.random.default_rng(seed)
+    new_directions: dict[int, np.ndarray] = {}
+    for layer_id, direction in cv.directions.items():
+        noise = rng.standard_normal(direction.shape).astype(direction.dtype)
+        noise *= np.linalg.norm(direction) / np.linalg.norm(noise)
+        new_directions[layer_id] = noise
+    return ControlVector(model_type=cv.model_type, directions=new_directions)
+
+
 def train_vectors(
     tokenizer: PreTrainedTokenizer,
     model: PreTrainedModel,
